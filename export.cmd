@@ -66,28 +66,28 @@ echo.
 echo Exporting: %~n1.p8.png
 pico8 %1 -F -export "%~n1.p8.png %~3"
 if errorlevel 1 goto :failed
-echo.
 
 if exist %~n1_html (
+	echo.
 	echo Deleting: %~n1_html
 	rmdir /S /Q %~n1_html
 )
 echo Exporting: %~n1.html
 pico8 %1 -F -export "%~2 %~n1.html %~3"
 if errorlevel 1 goto :failed
-echo.
 
 :: Not deleting bin folder results in
 :: duplicate files within the zip exports
 if exist %~n1.bin (
+	echo.
 	echo Deleting: %~n1.bin
 	rmdir /S /Q %~n1.bin
 )
 echo Exporting: %~n1.bin
 pico8 %1 -F -export "%~2 %~n1.bin %~3"
 if errorlevel 1 goto :failed
-echo.
 
+echo.
 echo Finished!
 echo Note that %~n1.bin and %~n1_html (if created) will be deleted if you
 echo use this script again. Don't place anything important in those folders.
