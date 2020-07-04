@@ -91,7 +91,7 @@ echo.
 echo Finished!
 echo Note that %~n1.bin and %~n1_html (if created) will be deleted if you
 echo use this script again. Don't place anything important in those folders.
-echo Also, if %~n1.p8.png didn't export correctly, please update PICO-8.
+echo Also, if something didn't export correctly, please update PICO-8.
 goto :end
 
 :noarg
