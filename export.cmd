@@ -62,30 +62,42 @@ if not [%3]==[] (
 )
 echo.
 
+:: These are both deleted in case the user disables WASM export
+if exist %~n1_html (
+	rmdir /S /Q %~n1_html
+	if exist %~n1_html goto :failed
+)
+if exist %~n1.wasm (
+	del %~n1.wasm
+	if exist %~n1.wasm goto :failed
+)
+
+if exist %~n1.bin (
+	rmdir /S /Q %~n1.bin
+	if exist %~n1.bin goto :failed
+)
+
 :: This requires at least PICO-8 0.2.1
 echo Exporting: %~n1.p8.png
 pico8 %1 -F -export "%~n1.p8.png %~3"
-if errorlevel 1 goto :failed
+if errorlevel 1 goto :picofailed
 
-if exist %~n1_html (
-	echo.
-	echo Deleting: %~n1_html
-	rmdir /S /Q %~n1_html
-)
 echo Exporting: %~n1.html
 pico8 %1 -F -export "%~2 %~n1.html %~3"
-if errorlevel 1 goto :failed
+if errorlevel 1 goto :picofailed
 
-:: Not deleting bin folder results in
-:: duplicate files within the zip exports
-if exist %~n1.bin (
-	echo.
-	echo Deleting: %~n1.bin
-	rmdir /S /Q %~n1.bin
+:: Zip up HTML folder for itch.io
+if exist %~n1_html (
+	echo Archiving: %~n1_html
+	cd %~n1_html
+	PowerShell -Command "Compress-Archive * %~n1_html.zip"
+	cd ..
+	if errorlevel 1 goto :failed
 )
+
 echo Exporting: %~n1.bin
 pico8 %1 -F -export "%~2 %~n1.bin %~3"
-if errorlevel 1 goto :failed
+if errorlevel 1 goto :picofailed
 
 echo.
 echo Finished!
@@ -100,6 +112,10 @@ echo Please edit %~nx0 in Notepad and see instructions at top.
 goto :end
 
 :failed
+echo Operation failed. See above error message.
+echo :end
+
+:picofailed
 echo.
 echo Operation failed. If PICO-8 isn't in default location,
 echo please add the path to the top of %~nx0 or in your own file.
